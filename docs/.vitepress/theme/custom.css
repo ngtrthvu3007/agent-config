@@ -1,0 +1,21 @@
+/* Hide default VitePress footer — replaced by CustomFooter */
+.VPFooter { display: none !important; }
+
+/* GitHub icon on hero alt button */
+.VPButton.alt[href*="github.com"]::before {
+  content: '';
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  background-image: url('/github-mark.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-right: 7px;
+  vertical-align: text-bottom;
+  opacity: 0.85;
+}
+
+.dark .VPButton.alt[href*="github.com"]::before {
+  filter: invert(1);
+}

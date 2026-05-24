@@ -1,0 +1,13 @@
+{
+  "name": "agent-config-docs",
+  "private": true,
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "vitepress": "^1.6.3"
+  }
+}
