@@ -1,42 +1,39 @@
 # Core Concepts
 
-Before using this repo, understand three foundational concepts: **Agent Config**, **Rule**, and **Skill**.
+This repo is organized around three things: config files that tell the agent where it's working and what conventions to follow, **rules** so the agent codes to your style, and **skills** so the agent follows the right process for each type of task.
 
-## What is Agent Config?
+## Agent Config
 
-Agent config is a collection of files that instruct an AI coding agent to work in your style or your team's style.
+Agent config is a collection of files that instruct an AI coding agent to work in your style or your team's style — instead of having to repeat context, conventions, and workflow every conversation.
 
-Without agent config, every conversation with Claude or Codex requires you to repeat context, conventions, and workflow from scratch. With agent config, all of that is defined once — the agent loads it at the start of every conversation and works correctly from the first turn.
+Repo structure:
 
-This repo provides a **customizable** agent config template for both Claude Code and Codex.
-
-```
-AGENTS.md       ← shared rules for all agents (Codex reads this directly)
-CLAUDE.md       ← bridge for Claude Code, imports AGENTS.md and adds Claude-specific config
-.claude/        ← Claude Code-specific config
-  rules/        ← condensed coding conventions
-  skills/       ← specialized workflows
-.codex/         ← Codex / ChatGPT-specific config
-  skills/       ← specialized workflows
-docs/           ← longer-form docs: domain context, full conventions, specs
+```shell
+project/
+├── AGENTS.md        # shared rules for all AI agents — Codex reads this directly
+├── CLAUDE.md        # bridge for Claude Code, imports AGENTS.md
+├── .claude/         # Claude Code-specific config
+│   ├── rules/       # coding conventions by domain
+│   └── skills/      # workflows per task type
+├── .codex/          # Codex-specific config
+│   └── skills/
+└── docs/            # domain context, full conventions, specs
+    ├── domain/
+    ├── engineering/
+    └── specs/
 ```
 
 ---
 
-## What is a Rule?
+## Rules
 
-A rule is a short, dense coding convention file that the agent reads **right before starting a specific type of task**.
+Rules are short, dense convention files the agent reads before starting a specific type of task. Each file covers one layer: `frontend`, `backend`, `database`, `api`, `testing`, `general`.
 
-### Characteristics
-
-- Short and dense — only what the agent needs to code to convention
-- No long explanations — just clear, actionable directives
-- Scoped by task type: frontend, backend, database, API, testing, general
+- Short and dense — only what the agent needs to code correctly
+- No explanations — just clear, actionable directives
 - A condensed version of the full conventions in `docs/engineering/conventions/`
 
-### Example
-
-`.claude/rules/frontend.md` contains:
+Example — `.claude/rules/frontend.md`:
 
 ```markdown
 ## React / Next.js
@@ -47,94 +44,54 @@ A rule is a short, dense coding convention file that the agent reads **right bef
 ## Handlers and Props
 - Event handlers: `handle` prefix
 - Callback props: `on` prefix
-...
 ```
 
-The agent reads this **before** writing any React component — without you having to remind it.
-
-### Rule vs. code comment
-
-| | Rule | Code comment |
-|---|---|---|
-| Location | Separate file in `.claude/rules/` | Inside source code |
-| Who reads it | AI agent | Developer and AI |
-| Purpose | Define working conventions | Explain specific logic |
-| When read | At task start | When reading code |
+The agent reads this before writing any React component — without you having to remind it. Unlike a code comment, rules live in a separate file and are loaded at the start of a task rather than when reading individual source files.
 
 ---
 
-## What is a Skill?
+## Skills
 
-A skill is a file that defines a **complete workflow** for a specific type of task.
-
-### Characteristics
+Skills are files that define a complete workflow for a specific type of task. Instead of the agent deciding on its own what to do first, a skill spells out each step.
 
 - Each skill = one complete workflow (plan → execute → verify)
 - Invoked by slash command: `/implement-feature`, `/debug-failure`, etc.
-- Or Claude auto-detects based on the `description:` in the frontmatter
-- Defines clearly: goal, process steps, what not to do, output format
+- Or the agent auto-detects from the `description:` in the frontmatter
 
-### SKILL.md structure
+SKILL.md structure:
 
 ```markdown
 ---
 name: skill-name
-description: Short description — Claude uses this to auto-detect when to use this skill
+description: Short description — Claude uses this to auto-detect when to use the skill
 argument-hint: <parameter hint>
 ---
 
 # Skill Name
 
 ## Goal
-The objective of the skill.
+The objective — 1-2 sentences.
 
 ## Process
-Step-by-step workflow.
+1. Step 1
+2. Step 2 — may have an approval gate
 
 ## Do Not
-What the skill must not do.
+- What the skill must not do
 
 ## Output
 Expected output format.
 ```
 
-### Example
-
-`.claude/skills/debug-failure/SKILL.md`:
-
-```markdown
----
-name: debug-failure
-description: Use when fixing a bug, failing test, regression, runtime error, or stack trace
----
-
-# Debug Failure
-
-## Process
-1. Read the error message and stack trace
-2. Identify the failing file and line
-3. Trace back to root cause — do not fix symptoms
-...
-```
-
-When you type `/debug-failure test UserService is failing` or paste a stack trace, Claude recognizes it and follows this exact process.
-
-### Skill vs. regular prompt
-
-| | Skill | Regular prompt |
-|---|---|---|
-| Lives in | File in `.claude/skills/` | In your head |
-| Consistency | Same every conversation | Varies by how you type it |
-| Version-controlled | ✓ | ✗ |
-| Team-shareable | ✓ | Hard to share |
+Unlike a regular prompt: skills are version-controlled, shareable across the team, and produce consistent results in every conversation.
 
 ---
 
-## The relationship between Rule and Skill
+## How Rules and Skills work together
 
 They don't replace each other — each solves a different problem:
 
-- **Rule** → _"what conventions should I code to?"_
-- **Skill** → _"what process should I follow for this task?"_
+- **Rules** → _"what conventions should I code to?"_
+- **Skills** → _"what process should I follow for this task?"_
 
-When Claude implements a feature, it follows the **Implement Feature Skill** (process) while also reading the **backend.md rule** (conventions).
+When implementing a feature, the agent follows the **Implement Feature Skill** (process) while also reading the **backend.md rule** (coding conventions).

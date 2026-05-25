@@ -1,174 +1,44 @@
-# Set Up Workflows
+# Adapt to Your Project
 
-This page explains how to combine skills, rules, and docs into a consistent workflow for your team — using this repo as a worked example.
+This repo is a template with sensible defaults for a general stack. To actually use it, a few things need to be adjusted to fit your project.
 
-## What is a workflow here?
+## Adapt rules to your real stack
 
-A workflow is a **sequence of skills called in order** when building a feature or fixing a bug. Instead of working ad-hoc, you have a fixed process that both the team and the agent follow.
+The rules in `.claude/rules/` use the repo's defaults — React/Next.js for frontend, Express/NestJS/Gin/Fiber for backend, PostgreSQL for database.
 
-```
-Idea → Spec → Plan → Implement → Review → QA → Done
-```
+The standard approach is to update the source of truth first, then sync the condensed rule:
 
-Each step in that chain maps to a skill.
+```shell
+# 1. Update the source convention
+vim docs/engineering/conventions/backend.md
 
----
-
-## Sample workflow: New feature
-
-The full workflow from idea to production-ready:
-
-### Step 1: Write the spec
-
-```
-/write-spec <feature name or short description>
+# 2. Sync the condensed rule
+/update-docs sync .claude/rules/backend.md with the updated convention
 ```
 
-Output: a spec file in `docs/specs/` with scope, acceptance criteria, edge cases, and approval points.
+Concrete example: if the project uses MongoDB instead of PostgreSQL, open `docs/engineering/conventions/database.md`, remove the PostgreSQL section, add MongoDB rules. The rule file follows.
 
-**Skip when:** Small, unambiguous task with no spec needed (e.g., adding one field to a form).
+If the project is frontend-only, remove `backend.md`, `database.md`, and `api.md` from `.claude/rules/` entirely, and drop the corresponding rows from the Coding Conventions table in `CLAUDE.md`.
 
-### Step 2: Plan the implementation
+## Trim skills
 
-```
-/plan-feature <spec file or description>
-```
+Remove skills you don't use from `.claude/skills/` and update the Skill Routing section in `AGENTS.md`. Too many skills causes the agent to route incorrectly.
 
-Output: implementation plan with task breakdown, affected files, approval gates.
+Minimum set for a backend project:
 
-**Skip when:** Scope is clear and the task isn't complex.
+| Skill | Use case |
+| --- | --- |
+| `implement-feature` | Core implementation |
+| `debug-failure` | Bug fixing |
+| `review-technical` | Code quality review |
+| `review-diff` | PR review |
+| `write-tests` | Test coverage |
 
-### Step 3: Implement
+Add more only when the team has a real need for them.
 
-```
-/implement-feature <task description or spec reference>
-```
+## Define approval gates
 
-The agent will:
-1. Read the relevant rule files (general + backend/frontend/api...)
-2. Implement following the approved plan
-3. Run verification
-
-### Step 4: Technical review
-
-```
-/review-technical <file or module to review>
-```
-
-Agent reviews: conventions, architecture fit, TypeScript correctness, performance.
-
-### Step 5: QA
-
-```
-/qa-test <feature or user flow to test>
-```
-
-Agent verifies acceptance criteria from the spec, reports pass/fail.
-
-### Step 6: Update docs (if needed)
-
-```
-/update-docs <doc section to update>
-```
-
----
-
-## Sample workflow: Bug fix
-
-```
-/debug-failure <error message or failing test name>
-```
-
-If a regression test is needed after the fix:
-
-```
-/write-tests <behavior that was just fixed>
-```
-
----
-
-## Sample workflow: PR review
-
-```
-/review-diff <branch or PR description>
-```
-
-For deeper technical quality review:
-
-```
-/review-solution <approach used in the PR>
-/review-technical <most heavily changed file or module>
-```
-
----
-
-## Real example from this repo
-
-This repo is an agent config template. Here are concrete examples of using the workflow with this repo:
-
-### Example 1: Add a new skill
-
-```
-# 1. Write a spec for the new skill
-/write-spec skill "export-report" — export PDF reports from dashboard
-
-# 2. Create the SKILL.md file
-/implement-feature create .claude/skills/export-report/SKILL.md per the spec
-
-# 3. Review the new skill
-/review-technical .claude/skills/export-report/SKILL.md
-
-# 4. Update docs
-/update-docs add export-report to .claude/README.md and AGENTS.md
-```
-
-### Example 2: Update a backend convention
-
-```
-# 1. View current convention
-# Read: docs/engineering/conventions/backend.md
-
-# 2. Update the source convention
-# Edit directly: docs/engineering/conventions/backend.md
-
-# 3. Sync the condensed rule
-/update-docs sync .claude/rules/backend.md with updated convention
-
-# 4. Review the diff
-/review-diff to check nothing was lost
-```
-
-### Example 3: Debug wrong Claude behavior
-
-```
-# Claude is not reading frontend.md when working on React tasks
-# → Check the mapping table in CLAUDE.md
-# → Check the description in the relevant SKILL.md
-
-# 1. Debug
-/debug-failure Claude not reading rules/frontend.md when implementing components
-
-# → Agent will: read CLAUDE.md, inspect the mapping table, find the missing trigger
-```
-
----
-
-## Setting up workflows for a team
-
-### 1. Decide the Codex vs Claude split
-
-Pattern in this repo:
-
-```
-Claude Code → implement, fix, refactor (tasks needing many file edits)
-Codex/GPT   → review, analysis, security (tasks needing broad reading)
-```
-
-If the team only uses Claude, move all skills to `.claude/skills/` and remove `.codex/`.
-
-### 2. Define approval gates
-
-List what must have explicit approval before the agent acts. Put this in `AGENTS.md`:
+List what requires explicit approval before the agent acts. Put this in `AGENTS.md`:
 
 ```markdown
 ## Approval Gates
@@ -177,45 +47,59 @@ Ask for approval before:
 - Changing database schema
 - Changing public API contract
 - Adding major dependencies
-- ...
 ```
 
-### 3. Pick only the skills you need
+The repo already ships with a reasonable default set — only change it when you have a specific reason.
 
-Start with a small set — add more as needed. Too many skills causes the agent to route incorrectly.
+## Codex vs Claude
 
-Minimum set for a backend project:
+If your team uses both:
 
-| Skill | Reason |
-|---|---|
-| implement-feature | Core implementation |
-| debug-failure | Bug fixing |
-| review-technical | Code quality |
-| review-diff | PR review |
-| write-tests | Test coverage |
-
-### 4. Adapt rules to your real stack
-
-Open `docs/engineering/conventions/` and update for your actual stack. Then sync `.claude/rules/`.
-
-Example: if the project uses MongoDB instead of PostgreSQL:
-
-```markdown
-# docs/engineering/conventions/database.md
-## MongoDB
-- Keep document shapes stable unless approved
-- Avoid unbounded document growth
-...
+```
+Claude Code → implement, fix, refactor (tasks needing many file edits)
+Codex / GPT → review, analysis, security audit (tasks needing broad reading)
 ```
 
-Remove the PostgreSQL section, add MongoDB rules.
+If you only use Claude, move all skills to `.claude/skills/` and remove the `.codex/` folder.
 
 ---
 
-## Setup checklist
+## Day-to-day workflow
 
-- [ ] `AGENTS.md` has core rules, approval gates, skill routing
-- [ ] `CLAUDE.md` has user profile, agent roles, docs mapping, rule mapping
+Once config fits the project, the daily workflow is straightforward.
+
+### New feature
+
+```
+/write-spec <short description>
+/plan-feature <spec file>
+/implement-feature <task>
+/review-technical <changed files>
+/qa-test <feature just implemented>
+```
+
+Skip `/write-spec` and `/plan-feature` for small tasks with obvious scope.
+
+### Bug fix
+
+```
+/debug-failure <error message or failing test name>
+/write-tests <behavior that was just fixed>   # if a regression test is needed
+```
+
+### PR review
+
+```
+/review-diff <branch or PR description>
+/review-technical <most heavily changed file>   # for a deeper quality review
+```
+
+---
+
+## Checklist
+
+- [ ] `AGENTS.md` has core rules, approval gates, and skill routing that fit the project
+- [ ] `CLAUDE.md` has the right user profile, rule mapping matches the rules you kept
 - [ ] `.claude/rules/` adapted to the real stack
 - [ ] `.claude/skills/` only keeps skills the team actually uses
 - [ ] `docs/engineering/conventions/` is the source of truth and synced with rules

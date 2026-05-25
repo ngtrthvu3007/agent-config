@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Bắt đầu từ đây
-      link: /guide/concepts
+      link: /guide/quick-start
     - theme: alt
       text: Xem trên GitHub
       link: https://github.com/VuNguyentranThe/agent-config

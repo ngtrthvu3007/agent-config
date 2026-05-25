@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /en/guide/concepts
+      link: /en/guide/quick-start
     - theme: alt
       text: View on GitHub
       link: https://github.com/VuNguyentranThe/agent-config

@@ -175,3 +175,5 @@ description: Use for code tasks
 # Specific enough
 description: Use when fixing a bug, failing test, regression, runtime error, or broken behavior
 ```
+
+For a breakdown of actual token costs and why context quality matters more than price: [Token & Context Quality](/en/guide/token-and-context).

@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 const base = process.env.GITHUB_ACTIONS ? '/agent-config/' : '/'
 
 const viNav = [
-  { text: 'Hướng dẫn', link: '/guide/concepts' },
+  { text: 'Hướng dẫn', link: '/guide/quick-start' },
   { text: 'Rules', link: '/rules/general' },
   { text: 'Skills', link: '/skills/plan-feature' },
   { text: 'Docs', link: '/domain/overview' },
@@ -11,7 +11,7 @@ const viNav = [
 ]
 
 const enNav = [
-  { text: 'Guide', link: '/en/guide/concepts' },
+  { text: 'Guide', link: '/en/guide/quick-start' },
   { text: 'Rules', link: '/en/rules/general' },
   { text: 'Skills', link: '/en/skills/plan-feature' },
   { text: 'Docs', link: '/en/domain/overview' },
@@ -20,13 +20,25 @@ const enNav = [
 
 const viSidebar = [
   {
-    text: 'Hướng dẫn',
+    text: 'Bắt đầu',
     items: [
+      { text: 'Quick Start', link: '/guide/quick-start' },
       { text: 'Khái niệm cơ bản', link: '/guide/concepts' },
+    ],
+  },
+  {
+    text: 'Hiểu cách hoạt động',
+    items: [
       { text: 'Agent nạp config thế nào?', link: '/guide/how-agents-read' },
+      { text: 'Token & Chất lượng Context', link: '/guide/token-and-context' },
+    ],
+  },
+  {
+    text: 'How-To Guides',
+    items: [
+      { text: 'Áp dụng cho Project Thật', link: '/guide/workflow' },
       { text: 'Tạo một Rule', link: '/guide/create-rule' },
       { text: 'Tạo một Skill', link: '/guide/create-skill' },
-      { text: 'Setup Workflow', link: '/guide/workflow' },
     ],
   },
   {
@@ -127,13 +139,25 @@ const viSidebar = [
 
 const enSidebar = [
   {
-    text: 'Guide',
+    text: 'Get Started',
     items: [
+      { text: 'Quick Start', link: '/en/guide/quick-start' },
       { text: 'Core Concepts', link: '/en/guide/concepts' },
+    ],
+  },
+  {
+    text: 'How It Works',
+    items: [
       { text: 'How Agents Load Config', link: '/en/guide/how-agents-read' },
+      { text: 'Token & Context Quality', link: '/en/guide/token-and-context' },
+    ],
+  },
+  {
+    text: 'How-To Guides',
+    items: [
+      { text: 'Adapt to Your Project', link: '/en/guide/workflow' },
       { text: 'Create a Rule', link: '/en/guide/create-rule' },
       { text: 'Create a Skill', link: '/en/guide/create-skill' },
-      { text: 'Set Up Workflows', link: '/en/guide/workflow' },
     ],
   },
   {
