@@ -9,5 +9,8 @@
   "devDependencies": {
     "@types/node": "^22.0.0",
     "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^2.2.0"
   }
 }

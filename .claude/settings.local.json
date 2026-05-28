@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(npm install *)",
-      "Bash(npx vitepress *)"
+      "Bash(npx vitepress *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(mkdir -p /Users/vu.nguyen/Projects/scheduled-work/agent-config/docs/public/downloads)"
+    ],
+    "additionalDirectories": [
+      "/Users/vu.nguyen/Projects/scheduled-work/agent-config/docs/public"
     ]
   }
 }

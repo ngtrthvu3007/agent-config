@@ -1,97 +1,90 @@
 # Khái niệm cơ bản
 
-Repo này tổ chức xung quanh ba thứ: config files để agent biết mình đang làm việc ở đâu và theo convention nào, **rules** để agent code đúng phong cách, và **skills** để agent follow đúng quy trình cho từng loại task.
+Có 3 thứ chính giúp bạn cá nhân hóa AI: **context file**, **rules**, và **skills**.
+Với phần lớn dự án, bắt đầu bằng context file là đủ. Khi cách làm việc cần rõ ràng hơn, hãy bổ sung rules và skills.
 
-## Agent Config
+## Context File
 
-Agent config là tập hợp các file hướng dẫn AI coding agent làm việc đúng phong cách của bạn hoặc team — thay vì phải nhắc lại convention và workflow mỗi lần chat.
+Context file là tệp văn bản đặt ở thư mục gốc của dự án, dùng để mô tả dự án, công nghệ sử dụng, và cách bạn muốn AI làm việc. AI đọc tệp này khi bắt đầu mỗi tác vụ.
 
-Cấu trúc của repo này:
+Không có định dạng bắt buộc. Chỉ cần đủ rõ để AI nắm được bối cảnh:
 
-```shell
-project/
-├── AGENTS.md        # Rule chung cho mọi AI agent — Codex đọc trực tiếp
-├── CLAUDE.md        # Bridge riêng cho Claude Code, import AGENTS.md
-├── .claude/         # Config riêng cho Claude Code
-│   ├── rules/       # Rules theo từng domain
-│   └── skills/      # Workflows cho từng loại task
-├── .codex/          # Config riêng cho Codex
-│   └── skills/
-└── docs/            # Domain context, conventions đầy đủ, specs
-    ├── domain/
-    ├── engineering/
-    └── specs/
+```markdown
+## Project
+
+Internal task management app. Backend API + web dashboard.
+
+## Stack
+
+Node.js, Express, PostgreSQL, React, TypeScript
+
+## How to Work
+
+- Use camelCase for variables and PascalCase for components
+- Do not use `any` in TypeScript
 ```
 
----
+Tên tệp phụ thuộc vào công cụ bạn dùng. `AGENTS.md` là tên phổ biến nhất và hoạt động với hầu hết công cụ AI hỗ trợ lập trình, bao gồm ChatGPT Codex. Riêng Claude dùng `CLAUDE.md`.
+
+<small>[Chi tiết về Claude](https://docs.claude.com/en/docs/claude-code/memory)</small>
 
 ## Rules
 
-Rules là file convention ngắn gọn mà agent đọc trước khi bắt đầu một loại task cụ thể. Mỗi file cover một layer: `frontend`, `backend`, `database`, `api`, `testing`, `general`.
+Rules là tập hợp các quy tắc AI cần tuân theo khi làm việc. Để dễ quản lý, rules thường được chia thành nhiều tệp theo phạm vi như `frontend`, `backend`, `database`, `api`, hoặc `testing`.
 
-- Ngắn, dense — chỉ chứa những gì agent cần để làm đúng ngay
-- Không giải thích lý do — chỉ quy tắc rõ ràng, actionable
-- Là bản rút gọn của conventions đầy đủ trong `docs/engineering/conventions/`
+- Càng cụ thể càng tốt: nói rõ nên làm gì và cần tránh gì
+- Có ví dụ ngắn sẽ hiệu quả hơn những quy tắc chung chung
+- Chỉ nạp những rules liên quan đến tác vụ hiện tại
 
-Ví dụ — `.claude/rules/frontend.md`:
+Ví dụ rules cho frontend:
 
 ```markdown
-## React / Next.js
-- Functional components only; arrow function syntax
-- Server Components by default in Next.js App Router
-- useEffect goes after local handlers, immediately before the JSX return
+## React
 
-## Handlers and Props
-- Event handlers: `handle` prefix
-- Callback props: `on` prefix
+- Functional components only, arrow function syntax
+- Use Server Components by default in the Next.js App Router
+- Place `useEffect` after handlers, right before the JSX return
+
+## Handlers
+
+- Event handlers: prefix `handle`
+- Callback props: prefix `on`
 ```
 
-Agent đọc file này trước khi viết React component mà không cần bạn nhắc. Khác với code comment ở chỗ rules nằm tách biệt, được đọc ở đầu task thay vì khi đọc từng file code.
-
----
+Rules nằm tách biệt khỏi mã nguồn. AI chỉ đọc khi tác vụ cần đến, thay vì phải suy ra quy tắc từ từng tệp nguồn.
 
 ## Skills
 
-Skills là file định nghĩa workflow hoàn chỉnh cho một loại task cụ thể. Thay vì agent tự quyết định làm gì trước làm gì sau, skill định nghĩa rõ từng bước.
-
-- Mỗi skill = 1 workflow hoàn chỉnh (plan → execute → verify)
-- Gọi bằng slash command: `/implement-feature`, `/debug-failure`, v.v.
-- Hoặc agent tự nhận biết từ `description:` trong frontmatter
-
-Cấu trúc file SKILL.md:
+Skills định nghĩa quy trình hoàn chỉnh cho một loại tác vụ. Thay vì để AI tự quyết định trình tự làm việc, skill chỉ rõ các bước cần đi theo.
 
 ```markdown
----
-name: ten-skill
-description: Mô tả — Claude dùng để tự nhận biết khi nào cần dùng skill này
-argument-hint: <gợi ý tham số>
----
-
-# Tên Skill
+# Debug Failure
 
 ## Goal
-Mục tiêu — 1-2 câu.
+
+Find the root cause and fix it without guessing.
 
 ## Process
-1. Bước 1
-2. Bước 2 — có thể có approval gate
+
+1. Read the full error message and stack trace
+2. Find the related file and line
+3. Confirm the root cause before changing code
+4. Fix the issue, then run the relevant tests
 
 ## Do Not
-- Điều không được làm
 
-## Output
-Format output mong đợi.
+- Do not change many places at once
+- Do not skip verification after the fix
 ```
 
-Khác với prompt thường: skill version-controlled, share được cho cả team, và cho kết quả nhất quán ở mọi conversation.
+Mỗi skill là một quy trình nhất quán, có thể quản lý bằng hệ thống phiên bản và chia sẻ cho cả nhóm dùng chung.
 
----
+## Ba thứ phối hợp ra sao
 
-## Rules và Skills phối hợp ra sao
+Ba thứ này bổ sung cho nhau, mỗi thứ giải quyết một vấn đề riêng:
 
-Chúng không thay thế nhau — mỗi cái giải quyết vấn đề khác:
-
+- **Context file** → _"AI đang làm việc trong dự án nào, với ai?"_
 - **Rules** → _"code theo quy tắc nào?"_
-- **Skills** → _"làm task theo quy trình nào?"_
+- **Skills** → _"làm tác vụ theo quy trình nào?"_
 
-Khi implement một feature, agent vừa follow **Implement Feature Skill** (quy trình) vừa đọc **backend.md rule** (quy tắc code).
+Ví dụ khi sửa lỗi, AI hiểu bối cảnh dự án qua context file, viết code đúng quy ước qua rules, và đi theo quy trình debug qua skill.

@@ -10,10 +10,10 @@
 - [Claude Code — Slash Commands & Skills](https://code.claude.com/docs/en/slash-commands) — tạo và dùng slash commands / skills
 - [Anthropic Documentation](https://docs.anthropic.com) — tài liệu API và model của Anthropic
 
-### OpenAI Codex / ChatGPT
+### ChatGPT Codex
 
-- [OpenAI Codex Documentation](https://platform.openai.com/docs/guides/codex) — tài liệu chính thức Codex
-- [AGENTS.md Specification](https://developers.openai.com/codex) — spec cho AGENTS.md file mà Codex đọc
+- [ChatGPT Codex Documentation](https://platform.openai.com/docs/guides/codex) — tài liệu chính thức về Codex trong ChatGPT
+- [AGENTS.md Specification](https://developers.openai.com/codex) — spec cho file AGENTS.md mà ChatGPT Codex đọc
 
 ---
 

@@ -1,97 +1,90 @@
 # Core Concepts
 
-This repo is organized around three things: config files that tell the agent where it's working and what conventions to follow, **rules** so the agent codes to your style, and **skills** so the agent follows the right process for each type of task.
+There are three main ways to personalize AI: a **context file**, **rules**, and **skills**.
+For most projects, starting with a context file is enough. Add rules and skills when your workflow needs more structure.
 
-## Agent Config
+## Context File
 
-Agent config is a collection of files that instruct an AI coding agent to work in your style or your team's style — instead of having to repeat context, conventions, and workflow every conversation.
+A context file is a text file at your project root. It describes the project, the technology stack, and how you want AI to work. AI reads this file at the start of each task.
 
-Repo structure:
+There is no required format. It only needs to be clear enough for AI to understand the context:
 
-```shell
-project/
-├── AGENTS.md        # shared rules for all AI agents — Codex reads this directly
-├── CLAUDE.md        # bridge for Claude Code, imports AGENTS.md
-├── .claude/         # Claude Code-specific config
-│   ├── rules/       # coding conventions by domain
-│   └── skills/      # workflows per task type
-├── .codex/          # Codex-specific config
-│   └── skills/
-└── docs/            # domain context, full conventions, specs
-    ├── domain/
-    ├── engineering/
-    └── specs/
+```markdown
+## Project
+
+Internal task management app. Backend API + web dashboard.
+
+## Stack
+
+Node.js, Express, PostgreSQL, React, TypeScript
+
+## How to Work
+
+- Use camelCase for variables and PascalCase for components
+- Do not use `any` in TypeScript
 ```
 
----
+The filename depends on the tool you use. `AGENTS.md` is the most common name and works with most AI coding tools, including ChatGPT Codex. Claude uses `CLAUDE.md`.
+
+<small>[Learn more about Claude](https://docs.claude.com/en/docs/claude-code/memory)</small>
 
 ## Rules
 
-Rules are short, dense convention files the agent reads before starting a specific type of task. Each file covers one layer: `frontend`, `backend`, `database`, `api`, `testing`, `general`.
+Rules are the set of instructions AI should follow while working. To keep them easy to manage, rules are often split into files by scope, such as `frontend`, `backend`, `database`, `api`, or `testing`.
 
-- Short and dense — only what the agent needs to code correctly
-- No explanations — just clear, actionable directives
-- A condensed version of the full conventions in `docs/engineering/conventions/`
+- Be as specific as possible: say what to do and what to avoid
+- Short examples are more useful than broad, abstract rules
+- Load only the rules that are relevant to the current task
 
-Example — `.claude/rules/frontend.md`:
+Example frontend rules:
 
 ```markdown
-## React / Next.js
-- Functional components only; arrow function syntax
-- Server Components by default in Next.js App Router
-- useEffect goes after local handlers, immediately before the JSX return
+## React
 
-## Handlers and Props
-- Event handlers: `handle` prefix
-- Callback props: `on` prefix
+- Functional components only, arrow function syntax
+- Use Server Components by default in the Next.js App Router
+- Place `useEffect` after handlers, right before the JSX return
+
+## Handlers
+
+- Event handlers: prefix `handle`
+- Callback props: prefix `on`
 ```
 
-The agent reads this before writing any React component — without you having to remind it. Unlike a code comment, rules live in a separate file and are loaded at the start of a task rather than when reading individual source files.
-
----
+Rules live outside the source code. AI reads them when the task needs them, instead of trying to infer conventions from each source file.
 
 ## Skills
 
-Skills are files that define a complete workflow for a specific type of task. Instead of the agent deciding on its own what to do first, a skill spells out each step.
-
-- Each skill = one complete workflow (plan → execute → verify)
-- Invoked by slash command: `/implement-feature`, `/debug-failure`, etc.
-- Or the agent auto-detects from the `description:` in the frontmatter
-
-SKILL.md structure:
+Skills define a complete workflow for a type of task. Instead of letting AI decide the order of work on its own, a skill spells out the steps to follow.
 
 ```markdown
----
-name: skill-name
-description: Short description — Claude uses this to auto-detect when to use the skill
-argument-hint: <parameter hint>
----
-
-# Skill Name
+# Debug Failure
 
 ## Goal
-The objective — 1-2 sentences.
+
+Find the root cause and fix it without guessing.
 
 ## Process
-1. Step 1
-2. Step 2 — may have an approval gate
+
+1. Read the full error message and stack trace
+2. Find the related file and line
+3. Confirm the root cause before changing code
+4. Fix the issue, then run the relevant tests
 
 ## Do Not
-- What the skill must not do
 
-## Output
-Expected output format.
+- Do not change many places at once
+- Do not skip verification after the fix
 ```
 
-Unlike a regular prompt: skills are version-controlled, shareable across the team, and produce consistent results in every conversation.
+Each skill is a consistent workflow that can be version-controlled and shared across the team.
 
----
+## How the three work together
 
-## How Rules and Skills work together
+These three pieces work together, but each solves a different problem:
 
-They don't replace each other — each solves a different problem:
+- **Context file** -> _"Which project is AI working in, and with whom?"_
+- **Rules** -> _"Which rules should AI follow when writing code?"_
+- **Skills** -> _"Which process should AI follow for this task?"_
 
-- **Rules** → _"what conventions should I code to?"_
-- **Skills** → _"what process should I follow for this task?"_
-
-When implementing a feature, the agent follows the **Implement Feature Skill** (process) while also reading the **backend.md rule** (coding conventions).
+For example, when fixing a bug, AI understands the project context from the context file, writes code according to rules, and follows the debug process from a skill.

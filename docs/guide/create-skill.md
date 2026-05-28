@@ -1,6 +1,6 @@
 # Tạo một Skill
 
-Skill định nghĩa quy trình làm việc cho một loại task cụ thể. Trang này hướng dẫn cách viết skill hiệu quả cho cả Claude Code và Codex.
+Skill định nghĩa quy trình làm việc cho một loại task cụ thể. Trang này hướng dẫn cách viết skill hiệu quả cho cả Claude Code và ChatGPT Codex.
 
 ## Khi nào nên tạo skill mới?
 
@@ -155,7 +155,7 @@ Liệt kê những gì skill **không** được làm — đặc biệt quan tr�
     SKILL.md          ← file duy nhất cần thiết
 ```
 
-Và tương tự cho Codex:
+Và tương tự cho ChatGPT Codex:
 ```
 .codex/skills/
   my-new-skill/
@@ -180,14 +180,14 @@ Và thêm workflow alias trong **Workflow Aliases**:
 - `/my-skill` or `my skill workflow` -> `.claude/skills/my-new-skill/SKILL.md`
 ```
 
-## Khi nào dùng Codex vs Claude cho skill?
+## Khi nào dùng ChatGPT Codex vs Claude cho skill?
 
 Repo này phân chia theo pattern:
 
 | Agent | Phù hợp cho |
 |---|---|
 | Claude Code | Implement, debug, refactor — task cần edit file nhiều |
-| Codex / GPT | Review, analysis, security audit — task cần đọc rộng, ít edit |
+| ChatGPT Codex | Review, analysis, security audit — task cần đọc rộng, ít edit |
 
 Có thể tạo skill ở cả 2 nơi với nội dung khác nhau — ví dụ: `review-technical` trong `.claude/skills/` có thể focus vào fix, còn trong `.codex/skills/` focus vào analysis + report.
 

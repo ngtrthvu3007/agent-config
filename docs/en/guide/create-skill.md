@@ -1,6 +1,6 @@
 # Create a Skill
 
-A skill defines the workflow for a specific type of task. This guide covers how to write effective skills for both Claude Code and Codex.
+A skill defines the workflow for a specific type of task. This guide covers how to write effective skills for both Claude Code and ChatGPT Codex.
 
 ## When should you create a skill?
 
@@ -155,7 +155,7 @@ Define what the skill returns. This sets expectations for the user and helps the
     SKILL.md          ← the only file required
 ```
 
-And similarly for Codex:
+And similarly for ChatGPT Codex:
 ```
 .codex/skills/
   my-new-skill/
@@ -180,14 +180,14 @@ And add a workflow alias:
 - `/my-skill` or `my skill workflow` -> `.claude/skills/my-new-skill/SKILL.md`
 ```
 
-## When to use Codex vs Claude for a skill?
+## When to use ChatGPT Codex vs Claude for a skill?
 
 This repo divides by pattern:
 
 | Agent | Best suited for |
 |---|---|
 | Claude Code | Implement, fix, refactor — tasks that need many file edits |
-| Codex / GPT | Review, analysis, security audit — tasks that need broad reading, few edits |
+| ChatGPT Codex | Review, analysis, security audit — tasks that need broad reading, few edits |
 
 You can create the same skill in both places with different content — e.g., `review-technical` in `.claude/skills/` can focus on fixing, while in `.codex/skills/` it focuses on analysis and reporting.
 

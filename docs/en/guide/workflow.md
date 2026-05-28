@@ -51,13 +51,13 @@ Ask for approval before:
 
 The repo already ships with a reasonable default set — only change it when you have a specific reason.
 
-## Codex vs Claude
+## ChatGPT Codex vs Claude
 
 If your team uses both:
 
 ```
 Claude Code → implement, fix, refactor (tasks needing many file edits)
-Codex / GPT → review, analysis, security audit (tasks needing broad reading)
+ChatGPT Codex → review, analysis, security audit (tasks needing broad reading)
 ```
 
 If you only use Claude, move all skills to `.claude/skills/` and remove the `.codex/` folder.

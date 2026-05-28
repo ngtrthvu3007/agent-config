@@ -1,146 +1,75 @@
-# Agent nạp config thế nào?
+# Cách AI đọc config
 
-Hiểu cách agent nạp các file config giúp bạn thiết kế agent config hiệu quả — tránh lãng phí token và đảm bảo agent có đúng context khi cần.
+AI không đọc mọi file trong dự án cùng một lúc. Nó bắt đầu từ phần hướng dẫn chính, rồi chỉ mở thêm rules, skills, hoặc tài liệu khác khi tác vụ cần đến.
 
-## Tài liệu gốc
+Hiểu nhịp đọc này giúp bạn viết config gọn hơn: đủ thông tin để AI bắt đầu đúng hướng, nhưng không phải nhồi mọi thứ vào một chỗ.
 
-- [Claude Code — Memory & CLAUDE.md](https://code.claude.com/docs/en/memory)
-- [Claude Code — claude-directory](https://code.claude.com/docs/en/claude-directory)
-- [AGENTS.md Specification (OpenAI Codex)](https://developers.openai.com/codex)
-- [ChatGPT — Projects](https://help.openai.com/en/articles/chatgpt-projects)
-- [ChatGPT — Custom Instructions](https://help.openai.com/en/articles/8096356)
+## Lúc bắt đầu cuộc trò chuyện
 
----
+Khi bạn mở một cuộc trò chuyện mới, AI đọc context file một lần để lấy bối cảnh ban đầu: đây là dự án gì, đang dùng công nghệ nào, và bạn muốn nó làm việc ra sao.
 
-## Claude Code nạp CLAUDE.md khi nào?
+File này không tự cập nhật lại theo từng tin nhắn. Nếu bạn sửa `AGENTS.md` hoặc `CLAUDE.md` trong lúc đang chat, thay đổi đó thường chỉ có hiệu lực ở cuộc trò chuyện kế tiếp.
 
-Khi bạn bắt đầu một **conversation mới** trong Claude Code — tức là khi bạn gõ lệnh `claude` trong terminal hoặc mở một chat session mới trong IDE extension. Không phải khi mở VS Code, không phải khi mở file CLAUDE.md.
+Nếu muốn dùng thay đổi ngay trong cuộc trò chuyện hiện tại, hãy gửi lại context file và yêu cầu AI đọc lại.
 
-Mỗi conversation mới = Claude Code nạp lại CLAUDE.md từ đầu. Nếu bạn sửa CLAUDE.md trong lúc đang chat, thay đổi đó không có hiệu lực cho đến conversation kế tiếp. Nếu muốn cập nhật thay đổi, bạn cần bắt đầu 1 conversation mới hoặc gọi claude đọc trực tiếp.
+Mỗi cuộc trò chuyện mới là một lần bắt đầu lại từ đầu. AI không tự nhớ nội dung từ phiên trước, trừ khi bạn ghi rõ vào file.
 
-**Cơ chế:** Claude Code tìm file `CLAUDE.md` tại thư mục gốc của project (cùng cấp với `.git`), sau đó inject(nhúng) nội dung vào system context trước turn đầu tiên. Directive `@AGENTS.md` trong CLAUDE.md khiến Claude Code nạp thêm nội dung của `AGENTS.md` vào cùng context đó.
+## Vị trí quyết định cách đọc
 
-**Token cost (ước tính với repo này):**
+Cùng là rules hoặc skills, nhưng cách AI đọc sẽ khác nhau tùy bạn đặt chúng ở đâu.
 
-| File | Tokens (ước tính) |
-| --- | --- |
-| CLAUDE.md (không tính AGENTS.md) | ~300–500 |
-| AGENTS.md | ~700–1,000 |
-| Tổng khi bắt đầu conversation | ~1,000–1,500 |
+Nếu bạn viết rules và skills trực tiếp trong `AGENTS.md`, chúng trở thành một phần của context file. AI đọc chúng ngay khi cuộc trò chuyện bắt đầu.
 
-Đây là lượng token tiêu tốn cố định cho mỗi conversation, bất kể task làm gì. Giữ AGENTS.md ngắn và stable là quan trọng.
-
-## Codex nạp AGENTS.md khi nào?
-
-Tương tự — Codex nạp `AGENTS.md` khi bắt đầu một conversation hoặc task mới. Không phải khi mở IDE hay mở file.
-
-Codex không có CLAUDE.md hay `.claude/`. Nó đọc trực tiếp:
-
-- `AGENTS.md` — nạp tự động
-- `.codex/skills/*/SKILL.md` — nạp khi skill được invoke
-
----
-
-## ChatGPT nạp config thế nào?
-
-ChatGPT — ở đây chỉ ChatGPT Web App, không phải Codex — không tự đọc file trong repo. Nó nhận config qua ba cơ chế khác nhau.
-
-**Project Instructions** là thứ gần nhất với AGENTS.md. Nếu bạn dùng ChatGPT Projects, mỗi project có một ô "Instructions" riêng — nội dung đó được nạp tự động vào system context khi bắt đầu mọi conversation trong project. Đây là chỗ bạn paste `AGENTS.md` vào. Giới hạn khoảng 1,500 ký tự, nên cần giữ ngắn.
-
-**Custom Instructions** hoạt động ở cấp user account — áp dụng cho toàn bộ conversation, không phân biệt project. Phù hợp cho coding style cá nhân hoặc preference chung, không phải rule riêng cho từng repo.
-
-**Memory** thì khác hẳn hai cái trên: đây là bộ nhớ ChatGPT tự học từ interaction, không phải config bạn chủ động viết. Bạn có thể xem và quản lý nó trong Settings, nhưng không nên dùng để thay thế Project Instructions.
-
-Với repo này, cách đơn giản nhất là paste nội dung `AGENTS.md` vào Project Instructions. Rule files thì paste trực tiếp vào prompt khi cần — ChatGPT không có cơ chế tự động đọc file như Codex.
-
----
-
-## Claude nạp Rules khi nào?
-
-Rules **không** được nạp tự động cùng với CLAUDE.md. Claude đọc chúng on-demand bằng Read tool trong lúc conversation, khi xác định task type cần đến.
-
-Trigger đến từ bảng mapping trong CLAUDE.md:
+Đây là cách phần lớn dự án nên bắt đầu: đặt những quy tắc và quy trình quan trọng nhất vào cùng một file để dễ đọc, dễ sửa, dễ duy trì.
 
 ```markdown
-| File | Read when |
-| --- | --- |
-| .claude/rules/general.md  | Any code change |
-| .claude/rules/frontend.md | React / Next.js changes |
-| .claude/rules/backend.md  | Express / NestJS / Gin / Fiber |
-...
+## How to Work
+
+- camelCase for variables, PascalCase for components
+- No `any` in TypeScript
+- Validate input at API boundary only
+
+## When debugging
+
+1. Read the full error and stack trace first
+2. Confirm root cause before changing code
+3. Run related tests after fixing
 ```
 
-Mỗi rule được nạp tối đa 1 lần per conversation, sau đó ở trong context cho đến hết session.
+Điểm cần nhớ là AI sẽ đọc toàn bộ nội dung đó mỗi khi bắt đầu cuộc trò chuyện, kể cả khi tác vụ hiện tại chỉ cần một phần nhỏ trong file.
 
-**Token cost mỗi rule file:** ~300–600 tokens. Một task backend điển hình nạp thêm `general.md` + `backend.md` ≈ ~800–1,200 tokens.
+Khi rules hoặc skills dài hơn và bắt đầu có nhiều trường hợp riêng, bạn có thể tách chúng ra file riêng. Lúc này, chúng không còn được đọc ngay từ đầu nữa; AI chỉ mở file liên quan khi tác vụ cần đến.
+
+| Cách đặt                                | Khi nào được đọc                              |
+| --------------------------------------- | --------------------------------------------- |
+| Viết trực tiếp trong context file       | Ngay khi bắt đầu cuộc trò chuyện              |
+| Tách rules hoặc skills thành file riêng | Khi AI xác định tác vụ cần đến                |
+| Docs, specs, conventions                | Khi bạn yêu cầu hoặc khi AI cần thêm bối cảnh |
+
+Bạn nên cân nhắc tách ra file riêng khi:
+
+- Context file bắt đầu dài và khó đọc
+- Dự án có nhiều mảng riêng như frontend, backend, database, và bạn muốn AI chỉ đọc phần cần thiết
+- Nhiều người trong nhóm cùng dùng và cần quản lý rules theo từng phần độc lập
+
+Không cần tách quá sớm. Một file gọn gàng vẫn dễ dùng hơn một hệ thống nhiều file khi bạn chưa cần đến.
+
+## Ghi chú theo công cụ
+
+**ChatGPT Codex** đọc `AGENTS.md` trực tiếp và tự động nạp khi bắt đầu tác vụ.
+
+**Claude Code** không đọc `AGENTS.md` trực tiếp. Claude cần `CLAUDE.md` ở thư mục gốc của dự án; dòng `@AGENTS.md` trong `CLAUDE.md` sẽ yêu cầu Claude Code nạp thêm `AGENTS.md`. Chi tiết: [Claude Code Memory](https://docs.claude.com/en/docs/claude-code/memory).
+
+**ChatGPT Codex (web)** không tự đọc file trong repo. Bạn có thể dán nội dung `AGENTS.md` vào **Project Instructions** để có hiệu ứng tương đương. Giới hạn khoảng 1.500 ký tự.
+
+## Ảnh hưởng thực tế
+
+**Giữ context file tập trung.** Đây là phần AI đọc đầu tiên, nên hãy để nó nói những điều quan trọng nhất: dự án là gì, nguyên tắc chung là gì, và cần đọc thêm ở đâu khi muốn biết chi tiết.
+
+**Tách rules và skills khi chúng bắt đầu dài lên.** Việc tách ra giúp AI chỉ đọc đúng phần cần thiết, đồng thời giúp bạn cập nhật từng phần dễ hơn.
+
+**Sau khi sửa file, hãy bắt đầu cuộc trò chuyện mới.** Đây là cách chắc nhất để AI đọc lại phiên bản config mới nhất của `AGENTS.md` hoặc `CLAUDE.md`.
 
 ---
 
-## Claude nạp Skills khi nào?
-
-Skills được nạp khi được invoke — không phải khi bắt đầu conversation.
-
-```bash
-# User gọi trực tiếp
-/implement-feature add export button
-
-# Claude tự nhận biết từ task description
-"there's a failing test in AuthService"
-→ khớp với debug-failure skill
-→ Claude nạp .claude/skills/debug-failure/SKILL.md
-```
-
-**Token cost mỗi skill:** ~400–1,000 tokens.
-
----
-
-## Cái gì được nạp khi nào?
-
-```txt
-Bắt đầu conversation mới
-├── Claude Code: CLAUDE.md + AGENTS.md    → tự động vào system context
-├── Codex:       AGENTS.md                → tự động vào system context
-└── ChatGPT:     Project Instructions     → tự động nếu đã setup (paste thủ công)
-
-Trong conversation (khi task cần)
-├── Rule files (Claude)  → nạp khi task type match với mapping table
-├── Skill files (Claude) → nạp khi user invoke hoặc Claude auto-detect
-└── Rule/Skill (ChatGPT) → paste trực tiếp vào prompt, không tự động
-
-Không bao giờ tự động nạp
-└── docs/domain/, docs/engineering/, docs/specs/
-    (chỉ nạp khi bạn yêu cầu hoặc task cần domain context)
-```
-
----
-
-## Tại sao điều này ảnh hưởng đến cách viết config?
-
-**Giữ AGENTS.md và CLAUDE.md ngắn** — chúng tiêu tốn token trong mỗi conversation. Đặt convention chi tiết vào `docs/engineering/conventions/` và rule files, chỉ giữ routing và core rules trong AGENTS.md.
-
-**Skill description phải đủ cụ thể** — Claude dùng `description:` để auto-detect. Quá chung → nhận nhầm task:
-
-```yaml
-# Quá chung
-description: Use for code tasks
-
-# Đủ cụ thể
-description: Use when fixing a bug, failing test, regression, runtime error, or broken behavior
-```
-
-**Không nhồi mọi thứ vào AGENTS.md:**
-
-```markdown
-# Sai — convention dài trong AGENTS.md
-[Core rules...]
-[Full frontend conventions...]
-[Full backend conventions...]
-
-# Đúng — AGENTS.md chỉ có routing
-[Core rules — ngắn, stable]
-[Routing: đọc .claude/rules/frontend.md khi làm React]
-```
-
-Chi tiết về token cost và lý do nên giữ config ngắn: [Token & Chất lượng Context](/guide/token-and-context).
-
----
+Đọc thêm về chi phí token và chất lượng context: [Token & Chất lượng Context](/guide/token-and-context).

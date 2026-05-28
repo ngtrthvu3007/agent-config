@@ -1,12 +1,3 @@
-# Quick Start
-
-## 1. Create `AGENTS.md` at your project root
-
-Download or copy the content below, place it at your project root, and fill in your details:
-
-[Download AGENTS.md](/downloads/AGENTS.md)
-
-```markdown
 ## Project
 
 [Short project description — 1-2 sentences]
@@ -60,6 +51,20 @@ Ask for approval before:
 - Changing broad architecture or module boundaries
 - Deleting files or large blocks of code
 
+## Multi-Step Requests
+
+When the user asks for multiple actions in one prompt, execute them in the requested order unless safety requires stopping.
+
+For prompts like "review this feature, fix issues, then refactor":
+
+1. Review against the stated requirements first.
+2. Report the issues found.
+3. Fix only confirmed issues.
+4. Refactor only within the touched or explicitly requested scope.
+5. Run relevant verification.
+
+Do not skip earlier requested steps. If a requested step requires approval, stop and ask before continuing.
+
 ## Verification
 
 After code changes:
@@ -82,52 +87,3 @@ For non-trivial tasks, include:
 - Known issues or remaining risk
 
 For review tasks: put findings first ordered by severity, include file and line references, say clearly if no issues are found.
-```
-
-## 2. Test it
-
-Open your AI tool and try a small task in the project. If the AI responds with the right stack and conventions without you having to repeat them — config is working.
-
----
-
-## Using with Claude Code
-
-Claude Code does not read `AGENTS.md` directly. You need a `CLAUDE.md` at the project root:
-
-[Download CLAUDE.md](/downloads/CLAUDE.md)
-
-```markdown
-@AGENTS.md
-
-## About Me
-
-[Your main stack, level, what doesn't need explaining]
-
-## Agent Roles
-
-The agent operates across multiple roles depending on the task:
-
-- **Engineer** — analyze requirements, plan, and implement tasks/features.
-- **UX/UI Designer** — design user flows, wireframes, interaction patterns, and UI decisions.
-- **Business Analyst** — clarify requirements, define acceptance criteria, and map business rules.
-- **Product Owner** — write specs, epics, user stories, and prioritize scope.
-- **Technical Writer** — produce project documentation, API docs, README, changelogs, and migration notes.
-
-## Agent Workflow
-
-For each task:
-
-1. **Analyze** — understand the requirement, identify affected areas, flag ambiguities.
-2. **Clarify** — ask one concise question if requirements or target scope are unclear. Do not ask multiple questions at once.
-3. **Plan** — outline the approach, affected files, and any approval gates before touching code. Skip for trivial or single-file edits.
-4. **Execute** — implement within the confirmed scope.
-5. **Verify** — run the smallest relevant checks; report results honestly.
-
-Do not proceed past an approval gate without explicit confirmation.
-```
-
-Fill in the `About Me` section. The `@AGENTS.md` directive tells Claude Code to load both files at the start of every new conversation.
-
----
-
-Want to understand why the config is structured this way — [Core Concepts](/en/guide/concepts).

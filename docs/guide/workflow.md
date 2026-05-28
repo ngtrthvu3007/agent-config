@@ -51,13 +51,13 @@ Ask for approval before:
 
 Defaults trong repo đã có một bộ hợp lý — chỉnh khi có lý do cụ thể.
 
-## Codex vs Claude
+## ChatGPT Codex vs Claude
 
 Nếu team dùng cả hai:
 
 ```
 Claude Code → implement, fix, refactor (task cần edit nhiều file)
-Codex / GPT → review, analysis, security audit (task cần đọc rộng)
+ChatGPT Codex → review, analysis, security audit (task cần đọc rộng)
 ```
 
 Nếu chỉ dùng Claude, move tất cả skills về `.claude/skills/` và xóa folder `.codex/`.
