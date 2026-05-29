@@ -1,44 +1,65 @@
-# Áp dụng cho Project Thật
+# Đưa Agent Config Vào Dự Án
 
-Repo này là template với defaults cho một stack chung. Để dùng được thật sự, bạn cần chỉnh một số chỗ cho fit với project hiện tại.
+Sau khi đã nắm được **context file**, **rules**, và **skills**, bước tiếp theo là dùng repo này như một điểm xuất phát: đọc cấu trúc có sẵn, giữ lại phần phù hợp, rồi chỉnh dần cho khớp với project của bạn.
 
-## Chỉnh rules theo stack thật
+Bạn không cần sao chép toàn bộ repo vào project. Điều đáng tham khảo nhất là cách các phần được đặt đúng vai trò: `AGENTS.md` giữ nguyên tắc chung, `CLAUDE.md` giúp Claude Code đọc đúng context, rules gom các quy tắc theo phạm vi, còn skills mô tả quy trình cho từng loại tác vụ.
 
-Rules trong `.claude/rules/` đang dùng defaults của repo — React/Next.js cho frontend, Express/NestJS/Gin/Fiber cho backend, PostgreSQL cho database.
+Nếu muốn xem toàn bộ cấu trúc trước khi chọn, bạn có thể bắt đầu từ:
 
-Quy trình chuẩn là chỉnh từ source of truth trước rồi mới sync lại rule rút gọn:
+- [GitHub repo](https://github.com/ngtrthvu3007/agent-config): toàn bộ cấu trúc của Agent Config
+- [`.claude/rules/`](https://github.com/ngtrthvu3007/agent-config/tree/master/.claude/rules): các rules mẫu theo từng phạm vi
+- <small>`.codex/rules/`: rules mẫu cho ChatGPT Codex <Badge type="info" text="Coming soon" /></small>
+- [`.codex/skills/`](https://github.com/ngtrthvu3007/agent-config/tree/master/.codex/skills): skills mẫu cho ChatGPT Codex
+- [`.claude/skills/`](https://github.com/ngtrthvu3007/agent-config/tree/master/.claude/skills): skills mẫu cho Claude Code
 
-```shell
-# 1. Chỉnh convention gốc
-vim docs/engineering/conventions/backend.md
+## Bắt đầu từ file nền
 
-# 2. Sync lại rule rút gọn
-/update-docs sync .claude/rules/backend.md với convention mới
+Hãy bắt đầu với `AGENTS.md`. Đây là nơi nên giữ những điều ổn định nhất: project dùng stack gì, agent nên làm việc theo nguyên tắc nào, khi nào cần hỏi trước, và những workflow nào có thể dùng.
+
+Nếu bạn dùng Claude Code, giữ thêm `CLAUDE.md` ở thư mục gốc của project. Claude Code ưu tiên đọc `CLAUDE.md`; repo này để `CLAUDE.md` import `AGENTS.md` để phần dùng chung chỉ cần viết một lần. Những phần riêng của Claude, như mapping rules hoặc hướng dẫn đọc file, có thể đặt sau đó.
+
+Nếu chỉ dùng Claude Code, bạn vẫn có thể bắt đầu với `CLAUDE.md`. Khi muốn dùng thêm ChatGPT Codex, hoặc muốn chia sẻ phần config chung cho người khác trong cùng project, hãy tách phần dùng chung sang `AGENTS.md`.
+
+Nếu dùng cả ChatGPT Codex và Claude Code, hãy để `AGENTS.md` làm điểm chung. Những phần riêng cho từng tool nên nằm trong file hoặc thư mục riêng của tool đó, để tránh một thay đổi nhỏ làm lệch hành vi ở cả hai nơi.
+
+## Chọn rules thật sự cần
+
+Rules trong repo đang minh họa cho một stack phổ biến: frontend, backend, database, API, testing. Khi đưa vào project của bạn, hãy giữ lại những rules tương ứng với phần bạn thật sự dùng.
+
+Ví dụ, nếu project chỉ có frontend, bạn có thể bỏ các rules về backend, database, và API. Nếu project dùng MongoDB thay vì PostgreSQL, hãy chỉnh tài liệu convention trước rồi rút gọn lại thành rule tương ứng.
+
+Ví dụ prompt cho agent:
+
+```text
+# 1. Update the source convention
+vim docs/engineering/conventions/database.md
+
+# 2. Sync the short rule
+/update-docs sync database rule from the updated convention
 ```
 
-Ví dụ thực tế: project dùng MongoDB thay PostgreSQL thì mở `docs/engineering/conventions/database.md`, xóa section PostgreSQL, thêm MongoDB rules. Rule file theo sau.
+Rule nên là bản ngắn để agent áp dụng nhanh. Phần giải thích dài hơn nên nằm trong `docs/engineering/conventions/`, vì đó là nơi phù hợp hơn cho bối cảnh, lý do, và ví dụ chi tiết.
 
-Nếu project chỉ có frontend, xóa hẳn `backend.md`, `database.md`, `api.md` khỏi `.claude/rules/` và bỏ các dòng tương ứng trong bảng Coding Conventions của `CLAUDE.md`.
+## Giữ skills vừa đủ
 
-## Trim skills
+Skills hữu ích khi bạn muốn agent đi theo một quy trình ổn định, chẳng hạn viết spec, lập kế hoạch, implement, debug, review, hoặc QA. Không phải project nào cũng cần toàn bộ skills ngay từ đầu.
 
-Xóa những skills không dùng trong `.claude/skills/` và cập nhật lại Skill Routing trong `AGENTS.md`. Quá nhiều skills khiến agent route nhầm.
+Bạn có thể mở `.codex/skills/` hoặc `.claude/skills/` ở phần trên để xem các workflow có sẵn, rồi chọn những skills gần với cách bạn làm việc nhất.
 
-Tập tối thiểu cho backend project:
+Một bộ tối thiểu thường dễ bắt đầu hơn:
 
-| Skill | Dùng cho |
+| Skill | Dùng khi |
 | --- | --- |
-| `implement-feature` | Implement task |
-| `debug-failure` | Bug fix |
-| `review-technical` | Code quality review |
-| `review-diff` | PR review |
-| `write-tests` | Test coverage |
+| `implement-feature` | Làm một thay đổi đã rõ yêu cầu |
+| `debug-failure` | Sửa lỗi, test fail, hoặc regression |
+| `review-diff` | Review thay đổi trước khi merge |
+| `write-tests` | Thêm test cho hành vi quan trọng |
 
-Thêm dần khi team có nhu cầu thật sự.
+Khi nhu cầu rõ hơn, bạn có thể thêm `write-spec`, `plan-feature`, `qa-test`, hoặc các skills chuyên biệt khác. Thêm dần sẽ dễ kiểm soát hơn là giữ quá nhiều workflow ngay từ đầu.
 
-## Xác định approval gates
+## Chỉnh approval gates
 
-Liệt kê những gì phải xin phép trước khi agent tự làm. Đặt vào `AGENTS.md`:
+Approval gates là những việc agent cần hỏi trước khi tự làm. Phần này nên đặt trong `AGENTS.md`, vì nó ảnh hưởng trực tiếp đến cách agent hành động trong repo.
 
 ```markdown
 ## Approval Gates
@@ -49,58 +70,53 @@ Ask for approval before:
 - Adding major dependencies
 ```
 
-Defaults trong repo đã có một bộ hợp lý — chỉnh khi có lý do cụ thể.
+Repo đã có một bộ mặc định khá an toàn. Khi áp dụng vào project của bạn, hãy giữ những mục còn đúng và thêm các ranh giới riêng cần bảo vệ, ví dụ payment, deployment, dữ liệu nhạy cảm, hoặc quyền truy cập nội bộ.
 
-## ChatGPT Codex vs Claude
+## Thử bằng một task nhỏ
 
-Nếu team dùng cả hai:
+Sau khi chỉnh xong, hãy thử bằng một task nhỏ và dễ kiểm tra. Mục tiêu không phải là làm thật nhiều ngay lập tức, mà là xem agent có đọc đúng context, áp dụng đúng rules, và chọn đúng skill hay không.
 
-```
-Claude Code → implement, fix, refactor (task cần edit nhiều file)
-ChatGPT Codex → review, analysis, security audit (task cần đọc rộng)
-```
+Một vài task phù hợp để thử:
 
-Nếu chỉ dùng Claude, move tất cả skills về `.claude/skills/` và xóa folder `.codex/`.
+- Sửa một lỗi nhỏ đã biết nguyên nhân
+- Thêm một test cho behavior đơn giản
+- Review một diff ngắn
+- Cập nhật một đoạn docs nhỏ theo convention mới
 
----
+Nếu agent bỏ qua quy tắc, hỏi lại điều đã có trong file, hoặc chọn workflow chưa phù hợp, thường chỉ cần chỉnh lại `AGENTS.md`, rule liên quan, hoặc mô tả skill cho rõ hơn.
 
-## Workflow ngày thường
+## Workflow hằng ngày
 
-Khi config đã fit với project, workflow khá đơn giản.
+Khi config đã khớp với project, bạn có thể dùng skills như những lối đi quen thuộc cho các loại công việc lặp lại.
+
+Các ví dụ dưới đây dùng workflow aliases trong `AGENTS.md`. Nếu tool của bạn không hỗ trợ cú pháp này, hãy dùng chúng như lời nhắc ngắn để gọi đúng skill.
 
 ### Feature mới
 
 ```bash
-/write-spec <mô tả ngắn>
-/plan-feature <spec file>
-/implement-feature <task>
-/review-technical <file đã thay đổi>
-/qa-test <feature vừa implement>
+/spec <short description>
+/plan <spec file>
+/implement <task>
+/review-technical <changed files>
+/qa <implemented feature>
 ```
 
-Bỏ qua `/write-spec` và `/plan-feature` với task nhỏ, rõ scope.
+Với task nhỏ và scope rõ, có thể đi thẳng vào `/implement`.
 
 ### Bug fix
 
 ```bash
-/debug-failure <error message hoặc tên test fail>
-/write-tests <behavior vừa fix>   # nếu cần regression test
+/debug <error message or failing test name>
+/tests <fixed behavior>
 ```
+
+Chỉ cần thêm regression test khi lỗi có khả năng quay lại hoặc hành vi đó đủ quan trọng để bảo vệ.
 
 ### Review PR
 
 ```bash
-/review-diff <branch hoặc mô tả PR>
-/review-technical <file thay đổi nhiều nhất>   # nếu cần review sâu hơn
+/review <branch or PR description>
+/review-technical <important changed file>
 ```
 
----
-
-## Checklist
-
-- [ ] `AGENTS.md` có core rules, approval gates, skill routing phù hợp
-- [ ] `CLAUDE.md` có user profile đúng, rule mapping khớp với rules đang giữ
-- [ ] `.claude/rules/` đã được chỉnh theo stack thật
-- [ ] `.claude/skills/` chỉ giữ skills team thật sự dùng
-- [ ] `docs/engineering/conventions/` là source of truth và sync với rules
-- [ ] Test với 1 task nhỏ để verify agent follow convention đúng
+Dùng `/review` để bắt lỗi trong diff trước. Nếu một file thay đổi lớn hoặc có logic phức tạp, dùng thêm `/review-technical` để đọc sâu hơn.

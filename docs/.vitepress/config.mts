@@ -26,12 +26,13 @@ const viSidebar = [
       { text: 'Khái niệm cơ bản', link: '/guide/concepts' },
       { text: 'Cách AI đọc config', link: '/guide/how-agents-read' },
       { text: 'Token & Context', link: '/guide/token-and-context' },
-      { text: 'Áp dụng cho project thật', link: '/guide/workflow' },
+      { text: 'Đưa Agent Config vào dự án', link: '/guide/workflow' },
     ],
   },
   {
     text: 'Agent Config',
     items: [
+      { text: 'Tổng quan', link: '/agent-config' },
       { text: 'AGENTS.md', link: '/agents' },
       { text: 'CLAUDE.md', link: '/claude' },
       {
@@ -49,39 +50,18 @@ const viSidebar = [
       {
         text: 'Skills',
         items: [
-          {
-            text: 'Planning',
-            items: [
-              { text: 'Plan Feature', link: '/skills/plan-feature' },
-              { text: 'Write Spec', link: '/skills/write-spec' },
-            ],
-          },
-          {
-            text: 'Implementation',
-            items: [
-              { text: 'Implement Feature', link: '/skills/implement-feature' },
-              { text: 'Debug Failure', link: '/skills/debug-failure' },
-            ],
-          },
-          {
-            text: 'Review',
-            items: [
-              { text: 'Review Solution', link: '/skills/review-solution' },
-              { text: 'Review Technical', link: '/skills/review-technical' },
-              { text: 'Review Diff', link: '/skills/review-diff' },
-              { text: 'UX/UI Review', link: '/skills/ux-ui-review' },
-              { text: 'Security Review', link: '/skills/security-review' },
-            ],
-          },
-          {
-            text: 'QA & Docs',
-            items: [
-              { text: 'QA Test', link: '/skills/qa-test' },
-              { text: 'Write Tests', link: '/skills/write-tests' },
-              { text: 'Update Docs', link: '/skills/update-docs' },
-              { text: 'Design UX/UI', link: '/skills/design-ux-ui' },
-            ],
-          },
+          { text: 'Plan Feature', link: '/skills/plan-feature' },
+          { text: 'Implement Feature', link: '/skills/implement-feature' },
+          { text: 'Debug Failure', link: '/skills/debug-failure' },
+          { text: 'Review Diff', link: '/skills/review-diff' },
+          { text: 'Review Technical', link: '/skills/review-technical' },
+          { text: 'Review Solution', link: '/skills/review-solution' },
+          { text: 'Write Spec', link: '/skills/write-spec' },
+          { text: 'Write Tests', link: '/skills/write-tests' },
+          { text: 'QA Test', link: '/skills/qa-test' },
+          { text: 'Security Review', link: '/skills/security-review' },
+          { text: 'UX/UI Review', link: '/skills/ux-ui-review' },
+          { text: 'Design UX/UI', link: '/skills/design-ux-ui' },
           { text: 'Tạo skill mới', link: '/guide/create-skill' },
         ],
       },
@@ -142,12 +122,13 @@ const enSidebar = [
       { text: 'Core Concepts', link: '/en/guide/concepts' },
       { text: 'How AI Reads Config', link: '/en/guide/how-agents-read' },
       { text: 'Token & Context Quality', link: '/en/guide/token-and-context' },
-      { text: 'Adapt to Your Project', link: '/en/guide/workflow' },
+      { text: 'Bring Agent Config Into Your Project', link: '/en/guide/workflow' },
     ],
   },
   {
     text: 'Agent Config',
     items: [
+      { text: 'Overview', link: '/en/agent-config' },
       { text: 'AGENTS.md', link: '/en/agents' },
       { text: 'CLAUDE.md', link: '/en/claude' },
       {
@@ -165,39 +146,18 @@ const enSidebar = [
       {
         text: 'Skills',
         items: [
-          {
-            text: 'Planning',
-            items: [
-              { text: 'Plan Feature', link: '/en/skills/plan-feature' },
-              { text: 'Write Spec', link: '/en/skills/write-spec' },
-            ],
-          },
-          {
-            text: 'Implementation',
-            items: [
-              { text: 'Implement Feature', link: '/en/skills/implement-feature' },
-              { text: 'Debug Failure', link: '/en/skills/debug-failure' },
-            ],
-          },
-          {
-            text: 'Review',
-            items: [
-              { text: 'Review Solution', link: '/en/skills/review-solution' },
-              { text: 'Review Technical', link: '/en/skills/review-technical' },
-              { text: 'Review Diff', link: '/en/skills/review-diff' },
-              { text: 'UX/UI Review', link: '/en/skills/ux-ui-review' },
-              { text: 'Security Review', link: '/en/skills/security-review' },
-            ],
-          },
-          {
-            text: 'QA & Docs',
-            items: [
-              { text: 'QA Test', link: '/en/skills/qa-test' },
-              { text: 'Write Tests', link: '/en/skills/write-tests' },
-              { text: 'Update Docs', link: '/en/skills/update-docs' },
-              { text: 'Design UX/UI', link: '/en/skills/design-ux-ui' },
-            ],
-          },
+          { text: 'Plan Feature', link: '/en/skills/plan-feature' },
+          { text: 'Implement Feature', link: '/en/skills/implement-feature' },
+          { text: 'Debug Failure', link: '/en/skills/debug-failure' },
+          { text: 'Review Diff', link: '/en/skills/review-diff' },
+          { text: 'Review Technical', link: '/en/skills/review-technical' },
+          { text: 'Review Solution', link: '/en/skills/review-solution' },
+          { text: 'Write Spec', link: '/en/skills/write-spec' },
+          { text: 'Write Tests', link: '/en/skills/write-tests' },
+          { text: 'QA Test', link: '/en/skills/qa-test' },
+          { text: 'Security Review', link: '/en/skills/security-review' },
+          { text: 'UX/UI Review', link: '/en/skills/ux-ui-review' },
+          { text: 'Design UX/UI', link: '/en/skills/design-ux-ui' },
           { text: 'Create a Skill', link: '/en/guide/create-skill' },
         ],
       },

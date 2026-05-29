@@ -4,7 +4,7 @@
 
 Download or copy the content below, place it at your project root, and fill in your details:
 
-[Download AGENTS.md](/downloads/AGENTS.md)
+<a href="/downloads/AGENTS.md" download>Download AGENTS.md</a>
 
 ```markdown
 ## Project
@@ -94,7 +94,7 @@ Open your AI tool and try a small task in the project. If the AI responds with t
 
 Claude Code does not read `AGENTS.md` directly. You need a `CLAUDE.md` at the project root:
 
-[Download CLAUDE.md](/downloads/CLAUDE.md)
+<a href="/downloads/CLAUDE.md" download>Download CLAUDE.md</a>
 
 ```markdown
 @AGENTS.md

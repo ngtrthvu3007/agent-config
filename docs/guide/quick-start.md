@@ -4,7 +4,7 @@
 
 Download hoặc copy nội dung bên dưới, đặt vào root project và điền thông tin của bạn vào:
 
-[Download AGENTS.md](/downloads/AGENTS.md)
+<a href="/downloads/AGENTS.md" download>Download AGENTS.md</a>
 
 ```markdown
 ## Project
@@ -92,7 +92,7 @@ Mở AI tool bạn đang dùng, thử một task nhỏ trong project. Nếu AI t
 
 Claude Code không đọc `AGENTS.md` trực tiếp. Cần thêm `CLAUDE.md` ở root project:
 
-[Download CLAUDE.md](/downloads/CLAUDE.md)
+<a href="/downloads/CLAUDE.md" download>Download CLAUDE.md</a>
 
 ```markdown
 ## Project

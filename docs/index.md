@@ -11,7 +11,7 @@ hero:
       link: /guide/quick-start
     - theme: alt
       text: Xem trên GitHub
-      link: https://github.com/VuNguyentranThe/agent-config
+      link: https://github.com/ngtrthvu3007/agent-config
 
 features:
   - icon:
